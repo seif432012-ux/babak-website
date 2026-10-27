@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Babak</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Cairo:wght@400;600;700;900&display=swap');
+        .font-en { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-ar { font-family: 'Cairo', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-en min-h-screen selection:bg-emerald-500 selection:text-white">
+
+    <!-- TOP HEADER & CONTROLS -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50 px-4 py-3">
+        <div class="max-w-4xl mx-auto flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-emerald-500 text-slate-950 font-black px-3 py-1.5 rounded-xl text-lg shadow-lg shadow-emerald-500/20">بابك</div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight" id="ui-brand">Babak <span class="text-emerald-400 text-sm font-normal">| Last-50m Portal</span></h1>
+                    <p class="text-xs text-slate-400" id="ui-subtitle">East Alexandria Night Delivery Solution</p>
+                </div>
+            </div>
+
+            <!-- CONTROLS: Mode Switcher & Language Toggle -->
+            <div class="flex items-center gap-2">
+                <div class="bg-slate-800 p-1 rounded-xl flex">
+                    <button onclick="switchMode('rider')" id="btn-rider" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-emerald-500 text-slate-950 shadow">Rider View</button>
+                    <button onclick="switchMode('customer')" id="btn-customer" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-300 hover:text-white">Customer Pass</button>
+                </div>
+                <button onclick="toggleLang()" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-700 transition" id="lang-btn">عربي</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto p-4 md:p-6">
+
+        <!-- ================= RIDER VIEW (MAIN DEMO) ================= -->
+        <div id="view-rider" class="space-y-6">
+            
+            <!-- Location Selector Pills -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+                <span class="text-xs text-slate-400 font-semibold whitespace-nowrap" id="ui-select-loc">Select Building:</span>
+                <button onclick="selectLocation('miami')" id="pill-miami" class="location-pill px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950 transition whitespace-nowrap shadow-md shadow-emerald-500/20">MIA-402 (Miami)</button>
+                <button onclick="selectLocation('smouha')" id="pill-smouha" class="location-pill px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 transition whitespace-nowrap">SMH-118 (Smouha)</button>
+                <button onclick="selectLocation('sidi')" id="pill-sidi" class="location-pill px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 transition whitespace-nowrap">SDB-205 (Sidi Bishr)</button>
+            </div>
+
+            <!-- MAIN PASS CARD -->
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 md:p-8 shadow-2xl relative overflow-hidden">
+                <!-- Top Status Badge -->
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+                    <div class="flex items-center gap-2">
+                        <span id="badge-code" class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-full text-xs font-bold tracking-wider">MIA-402</span>
+                        <span class="flex items-center gap-1.5 text-xs text-emerald-400 font-medium bg-emerald-500/5 px-2.5 py-1 rounded-full">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> <span id="ui-verified">Verified Entrance</span>
+                        </span>
+                    </div>
+                    <div class="bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700 text-xs font-mono text-slate-300" id="link-display">
+                        babak.eg/MIA-402
+                    </div>
+                </div>
+
+                <!-- Building Title & Subtitle -->
+                <div class="mb-6">
+                    <h2 id="loc-title" class="text-2xl md:text-3xl font-black text-white tracking-tight mb-1">Borg El-Ferdous, Miami</h2>
+                    <p id="loc-desc" class="text-slate-400 text-sm md:text-base">Khaled Ibn El-Waleed St, behind the Banque Misr branch</p>
+                </div>
+
+                <!-- ENLARGED FULL-DETAIL MICRO-MAP & VISUAL ROUTING CONTAINER -->
+                <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 md:p-6 mb-6 relative overflow-hidden">
+                    <div class="absolute top-3 left-3 bg-slate-900/90 backdrop-blur border border-slate-700 px-3 py-1 rounded-lg text-xs font-semibold text-emerald-400 flex items-center gap-1.5 z-10">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+                        <span id="map-tag">Last-50m Micro-Navigation Map</span>
+                    </div>
+
+                    <!-- Visual Interactive Map Simulation -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-8">
+                        <!-- Card 1: Night Landmark -->
+                        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center flex flex-col justify-between">
+                            <div>
+                                <div class="text-2xl mb-1" id="landmark-icon">🏪</div>
+                                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1" id="ui-lm-title">Night Landmark</h4>
+                                <p id="landmark-text" class="text-sm font-bold text-white">24/7 Supermarket Light Sign</p>
+                            </div>
+                            <div class="mt-3 bg-emerald-500/10 text-emerald-400 text-xs py-1 rounded font-medium" id="ui-lm-note">Spot this first at night</div>
+                        </div>
+
+                        <!-- Card 2: Exact Entrance Door with Photo Preview Slot -->
+                        <div class="bg-slate-900 border-2 border-emerald-500/50 rounded-xl p-4 text-center flex flex-col justify-between shadow-lg shadow-emerald-500/10 relative">
+                            <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full uppercase" id="ui-door-badge">Exact Door</div>
+                            <div>
+                                <!-- Door Photo Slot -->
+                                <div id="display-door-photo" class="w-full h-24 bg-slate-950 border border-slate-800 rounded-lg mb-2 flex items-center justify-center text-xs text-slate-400 overflow-hidden relative">
+                                    <span id="ui-photo-placeholder">📷 [Actual Door Photo]</span>
+                                </div>
+                                <h4 class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1" id="ui-door-title">Building Entrance</h4>
+                                <p id="door-text" class="text-sm font-bold text-white">Main Iron Gate (Left side of arcade)</p>
+                            </div>
+                            <div class="mt-3 bg-slate-800 text-slate-300 text-xs py-1 rounded font-medium" id="ui-door-note">No guesswork required</div>
+                        </div>
+
+                        <!-- Card 3: Safe Parking Spot -->
+                        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center flex flex-col justify-between">
+                            <div>
+                                <div class="text-2xl mb-1">🏍️</div>
+                                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1" id="ui-park-title">Safe Bike Stop</h4>
+                                <p id="park-text" class="text-sm font-bold text-white">By Pharmacy Corner (No traffic fine risk)</p>
+                            </div>
+                            <div class="mt-3 bg-amber-500/10 text-amber-400 text-xs py-1 rounded font-medium" id="ui-park-note">2-Min Secure Parking</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Property Details Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div class="bg-slate-950/60 border border-slate-800/80 rounded-2xl p-3.5">
+                        <span class="block text-[11px] font-semibold text-slate-400 mb-1" id="ui-floor-label">Floor & Apt</span>
+                        <span id="val-floor" class="text-sm font-bold text-white">5th Floor, Apt 502</span>
+                    </div>
+                    <div class="bg-slate-950/60 border border-slate-800/80 rounded-2xl p-3.5">
+                        <span class="block text-[11px] font-semibold text-slate-400 mb-1" id="ui-elevator-label">Elevator Status</span>
+                        <span id="val-elevator" class="text-sm font-bold text-emerald-400">Working Normally (Key inside)</span>
+                    </div>
+                    <div class="bg-slate-950/60 border border-slate-800/80 rounded-2xl p-3.5">
+                        <span class="block text-[11px] font-semibold text-slate-400 mb-1" id="ui-gate-label">Gate Code / Bell</span>
+                        <span id="val-gate" class="text-sm font-bold text-white">Ring #502 on Intercom</span>
+                    </div>
+                    <div class="bg-slate-950/60 border border-slate-800/80 rounded-2xl p-3.5">
+                        <span class="block text-[11px] font-semibold text-slate-400 mb-1" id="ui-change-label">Cash / Change Note</span>
+                        <span id="val-change" class="text-sm font-bold text-white">Exact change ready</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- ================= CUSTOMER PASS GENERATOR VIEW ================= -->
+        <div id="view-customer" class="hidden space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl max-w-xl mx-auto">
+                <h3 class="text-xl font-black text-white mb-2" id="cust-header">Create Your Babak Delivery Pass (30s)</h3>
+                <p class="text-xs text-slate-400 mb-6" id="cust-sub">One-time setup for your apartment entrance in East Alexandria.</p>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1" id="lbl-bname">Building Name / Tower</label>
+                        <input type="text" id="input-bname" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500" value="Borg Al-Amal, Miami">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1" id="lbl-street">Street Name</label>
+                            <input type="text" id="input-street" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500" value="Iskandar Ibrahim St">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1" id="lbl-apt">Floor & Apartment</label>
+                            <input type="text" id="input-apt" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500" value="Floor 3, Apt 12">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1" id="lbl-landmark">Night Landmark Description</label>
+                        <input type="text" id="input-landmark" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500" value="Next to El-Abd Pharmacy sign">
+                    </div>
+
+                    <!-- NEW: Door Photo Upload Field -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1" id="lbl-doorphoto">Upload Door Photo (Entrance)</label>
+                        <input type="file" id="input-doorphoto" accept="image/*" onchange="previewDoorPhoto(event)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-400 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-500 file:text-slate-950 hover:file:bg-emerald-400 cursor-pointer">
+                    </div>
+
+                    <button onclick="generatePass()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-emerald-500/20 mt-2" id="btn-gen">
+                        Generate & Copy Babak Link
+                    </button>
+                </div>
+
+                <div id="success-box" class="hidden mt-6 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 text-center">
+                    <p class="text-xs text-emerald-400 font-semibold mb-2" id="succ-msg">✨ Success! Share this link in your delivery checkouts:</p>
+                    <div class="bg-slate-950 py-2 px-3 rounded-xl font-mono text-xs text-emerald-300 inline-block">babak.eg/MIA-99X</div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- JAVASCRIPT LOGIC & BILINGUAL DICTIONARY -->
+    <script>
+        let currentLang = 'en';
+        let currentLoc = 'miami';
+        let customUploadedPhotoUrl = null;
+
+        const data = {
+            en: {
+                brand: 'Babak <span class="text-emerald-400 text-sm font-normal">| Last-50m Portal</span>',
+                subtitle: 'East Alexandria Night Delivery Solution',
+                selectLoc: 'Select Building:',
+                verified: 'Verified Entrance',
+                modeRider: 'Rider View',
+                modeCustomer: 'Customer Pass',
+                langBtn: 'عربي',
+                mapTag: 'Last-50m Micro-Navigation Map',
+                lmTitle: 'Night Landmark',
+                lmNote: 'Spot this first at night',
+                doorBadge: 'Exact Door',
+                doorTitle: 'Building Entrance',
+                doorNote: 'No guesswork required',
+                parkTitle: 'Safe Bike Stop',
+                parkNote: '2-Min Secure Parking',
+                floorLabel: 'Floor & Apt',
+                elevatorLabel: 'Elevator Status',
+                gateLabel: 'Gate Code / Bell',
+                changeLabel: 'Cash / Change Note',
+                custHeader: 'Create Your Babak Delivery Pass (30s)',
+                custSub: 'One-time setup for your apartment entrance in East Alexandria.',
+                lblBname: 'Building Name / Tower',
+                lblStreet: 'Street Name',
+                lblApt: 'Floor & Apartment',
+                lblLandmark: 'Night Landmark Description',
+                lblDoorPhoto: 'Upload Door Photo (Entrance)',
+                btnGen: 'Generate & Copy Babak Link',
+                succMsg: '✨ Success! Share this link in your delivery checkouts:',
+                photoPlaceholder: '📷 [Actual Door Photo]',
+                locations: {
+                    miami: {
+                        code: 'MIA-402',
+                        url: 'babak.eg/MIA-402',
+                        title: 'Borg El-Ferdous, Miami',
+                        desc: 'Khaled Ibn El-Waleed St, behind the Banque Misr branch',
+                        landmark: '24/7 Supermarket Light Sign',
+                        door: 'Main Iron Gate (Left side of arcade)',
+                        park: 'By Pharmacy Corner (No traffic fine risk)',
+                        floor: '5th Floor, Apt 502',
+                        elevator: 'Working Normally (Key inside)',
+                        gate: 'Ring #502 on Intercom',
+                        change: 'Exact change ready'
+                    },
+                    smouha: {
+                        code: 'SMH-118',
+                        url: 'babak.eg/SMH-118',
+                        title: 'Borg El-Yasmine, Smouha',
+                        desc: 'Fawzy Maaz St, facing the main garden entrance',
+                        landmark: 'Brightly Lit El-Ezz Cafe Sign',
+                        door: 'Glass Door under Marble Canopy',
+                        park: 'Wide side street parking slot',
+                        floor: '3rd Floor, Apt 304',
+                        elevator: 'Working Normally',
+                        gate: 'Guard Kiosk (Show Pass)',
+                        change: 'Change available'
+                    },
+                    sidi: {
+                        code: 'SDB-205',
+                        url: 'babak.eg/SDB-205',
+                        title: 'Borg El-Salam, Sidi Bishr',
+                        desc: 'El-Esawy St, facing the Green Mosque Minaret',
+                        landmark: 'Active 24/7 Juice Shop Canopy',
+                        door: 'Blue Steel Door next to Bakery',
+                        park: 'In front of closed store shutter',
+                        floor: '7th Floor, Apt 71',
+                        elevator: 'Maintenance today (Use stairs)',
+                        gate: 'Call intercom #71',
+                        change: 'Need 50 EGP change'
+                    }
+                }
+            },
+            ar: {
+                brand: 'بابك <span class="text-emerald-400 text-sm font-normal">| بوابة الـ 50 متر الأخيرة</span>',
+                subtitle: 'حل توصيل الليل في شرق الإسكندرية',
+                selectLoc: 'اختر العمارة:',
+                verified: 'مدخل موثق',
+                modeRider: 'وضع الطيار',
+                modeCustomer: 'تصريح العميل',
+                langBtn: 'English',
+                mapTag: 'خريطة تفصيلية دقيقة لآخر 50 متر',
+                lmTitle: 'معلم ليلي مضيء',
+                lmNote: 'شاهده أولاً بالليل',
+                doorBadge: 'الباب الدقيق',
+                doorTitle: 'مدخل العمارة',
+                doorNote: 'بدون أي حيرة',
+                parkTitle: 'ركن آمن للموتوسيكل',
+                parkNote: 'ركن آمن لمدة دقيقتين',
+                floorLabel: 'الدور والشقة',
+                elevatorLabel: 'حالة الأسانسير',
+                gateLabel: 'كود البوابة / الجرس',
+                changeLabel: 'ملحوظة الفكة / الكاش',
+                custHeader: 'أنشئ تصريح بابك الخاص بك (في 30 ثانية)',
+                custSub: 'إعداد لمرة واحدة لمدخل شقتك في شرق الإسكندرية.',
+                lblBname: 'اسم العمارة أو البرج',
+                lblStreet: 'اسم الشارع',
+                lblApt: 'الدور ورقم الشقة',
+                lblLandmark: 'وصف المعلم الليلي المضيء',
+                lblDoorPhoto: 'رفع صورة باب العمارة',
+                btnGen: 'إنشاء ونسخ رابط بابك',
+                succMsg: '✨ تم بنجاح! شارك هذا الرابط في خانة العنوان:',
+                photoPlaceholder: '📷 [صورة باب العمارة الحقيقية]',
+                locations: {
+                    miami: {
+                        code: 'MIA-402',
+                        url: 'babak.eg/MIA-402',
+                        title: 'برج الفردوس، ميامي',
+                        desc: 'شارع خالد بن الوليد، خلف فرع بنك مصر',
+                        landmark: 'إضاءة سوبرماركت 24 ساعة',
+                        door: 'بوابة الحديد الرئيسية (يسار الممر)',
+                        park: 'بجوار ركن الصيدلية (بدون غرامة مرور)',
+                        floor: 'الدور الخامس، شقة 502',
+                        elevator: 'شغال طبيعي',
+                        gate: 'اضغط #502 في الإنتركوم',
+                        change: 'الفكة جاهزة عند الاستلام'
+                    },
+                    smouha: {
+                        code: 'SMH-118',
+                        url: 'babak.eg/SMH-118',
+                        title: 'برج الياسمين، سموحة',
+                        desc: 'شارع فوزي معاذ، مواجه لمدخل الحديقة الرئيسي',
+                        landmark: 'يافتة كافيه العز المضيئة',
+                        door: 'باب زجاجي تحت مظلة رخام',
+                        park: 'مكان ركن واسع في الشارع الجانبي',
+                        floor: 'الدور الثالث، شقة 304',
+                        elevator: 'شغال',
+                        gate: 'كشك البواب (أظهر التصريح)',
+                        change: 'الفكة متوفرة'
+                    },
+                    sidi: {
+                        code: 'SDB-205',
+                        url: 'babak.eg/SDB-205',
+                        title: 'برج السلام، سيدي بشر',
+                        desc: 'شارع العصافرة، مواجه لمئذنة المسجد الأخضر',
+                        landmark: 'مظلة محل عصير شغال للصبح',
+                        door: 'باب صاج أزرق بجوار المخبز',
+                        park: 'أمام قفل المحل المغلق',
+                        floor: 'الدور السابع، شقة 71',
+                        elevator: 'صيانة اليوم (استخدم السلم)',
+                        gate: 'اتصل إنتركوم #71',
+                        change: 'مطلوب فكة 50 جنيه'
+                    }
+                }
+            }
+        };
+
+        function toggleLang() {
+            currentLang = currentLang === 'en' ? 'ar' : 'en';
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            document.documentElement.className = currentLang === 'ar' ? 'font-ar' : 'font-en';
+            updateUI();
+        }
+
+        function switchMode(mode) {
+            const riderView = document.getElementById('view-rider');
+            const customerView = document.getElementById('view-customer');
+            const btnRider = document.getElementById('btn-rider');
+            const btnCustomer = document.getElementById('btn-customer');
+
+            if (mode === 'rider') {
+                riderView.classList.remove('hidden');
+                customerView.classList.add('hidden');
+                btnRider.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-emerald-500 text-slate-950 shadow';
+                btnCustomer.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-300 hover:text-white';
+            } else {
+                riderView.classList.add('hidden');
+                customerView.classList.remove('hidden');
+                btnCustomer.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-emerald-500 text-slate-950 shadow';
+                btnRider.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-300 hover:text-white';
+            }
+        }
+
+        function selectLocation(locKey) {
+            currentLoc = locKey;
+            customUploadedPhotoUrl = null; // reset custom photo on preset change
+            ['miami', 'smouha', 'sidi'].forEach(k => {
+                const pill = document.getElementById(`pill-${k}`);
+                if (k === locKey) {
+                    pill.className = 'location-pill px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950 transition whitespace-nowrap shadow-md shadow-emerald-500/20';
+                } else {
+                    pill.className = 'location-pill px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 transition whitespace-nowrap';
+                }
+            });
+            updateUI();
+        }
+
+        function previewDoorPhoto(event) {
+            const file = event.target.files[0];
+            if (file) {
+                customUploadedPhotoUrl = URL.createObjectURL(file);
+                const photoBox = document.getElementById('display-door-photo');
+                photoBox.innerHTML = `<img src="${customUploadedPhotoUrl}" class="w-full h-full object-cover">`;
+            }
+        }
+
+        function updateUI() {
+            const dict = data[currentLang];
+            const loc = dict.locations[currentLoc];
+
+            document.getElementById('ui-brand').innerHTML = dict.brand;
+            document.getElementById('ui-subtitle').innerText = dict.subtitle;
+            document.getElementById('ui-select-loc').innerText = dict.selectLoc;
+            document.getElementById('ui-verified').innerText = dict.verified;
+            document.getElementById('btn-rider').innerText = dict.modeRider;
+            document.getElementById('btn-customer').innerText = dict.modeCustomer;
+            document.getElementById('lang-btn').innerText = dict.langBtn;
+            document.getElementById('map-tag').innerText = dict.mapTag;
+
+            document.getElementById('ui-lm-title').innerText = dict.lmTitle;
+            document.getElementById('ui-lm-note').innerText = dict.lmNote;
+            document.getElementById('ui-door-badge').innerText = dict.doorBadge;
+            document.getElementById('ui-door-title').innerText = dict.doorTitle;
+            document.getElementById('ui-door-note').innerText = dict.doorNote;
+            document.getElementById('ui-park-title').innerText = dict.parkTitle;
+            document.getElementById('ui-park-note').innerText = dict.parkNote;
+
+            document.getElementById('ui-floor-label').innerText = dict.floorLabel;
+            document.getElementById('ui-elevator-label').innerText = dict.elevatorLabel;
+            document.getElementById('ui-gate-label').innerText = dict.gateLabel;
+            document.getElementById('ui-change-label').innerText = dict.changeLabel;
+
+            document.getElementById('cust-header').innerText = dict.custHeader;
+            document.getElementById('cust-sub').innerText = dict.custSub;
+            document.getElementById('lbl-bname').innerText = dict.lblBname;
+            document.getElementById('lbl-street').innerText = dict.lblStreet;
+            document.getElementById('lbl-apt').innerText = dict.lblApt;
+            document.getElementById('lbl-landmark').innerText = dict.lblLandmark;
+            document.getElementById('lbl-doorphoto').innerText = dict.lblDoorPhoto;
+            document.getElementById('btn-gen').innerText = dict.btnGen;
+            document.getElementById('succ-msg').innerText = dict.succMsg;
+
+            if (!customUploadedPhotoUrl) {
+                document.getElementById('display-door-photo').innerHTML = `<span id="ui-photo-placeholder">${dict.photoPlaceholder}</span>`;
+            }
+
+            // Location details
+            document.getElementById('badge-code').innerText = loc.code;
+            document.getElementById('link-display').innerText = loc.url;
+            document.getElementById('loc-title').innerText = loc.title;
+            document.getElementById('loc-desc').innerText = loc.desc;
+            document.getElementById('landmark-text').innerText = loc.landmark;
+            document.getElementById('door-text').innerText = loc.door;
+            document.getElementById('park-text').innerText = loc.park;
+            document.getElementById('val-floor').innerText = loc.floor;
+            document.getElementById('val-elevator').innerText = loc.elevator;
+            document.getElementById('val-gate').innerText = loc.gate;
+            document.getElementById('val-change').innerText = loc.change;
+        }
+
+        function generatePass() {
+            const box = document.getElementById('success-box');
+            box.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
