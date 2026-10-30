@@ -177,7 +177,7 @@
 
                 <div id="success-box" class="hidden mt-6 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 text-center">
                     <p class="text-xs text-emerald-400 font-semibold mb-2" id="succ-msg">✨ Success! Share this link in your delivery checkouts:</p>
-                    <div class="bg-slate-950 py-2 px-3 rounded-xl font-mono text-xs text-emerald-300 inline-block">babak.eg/MIA-99X</div>
+                    <div id="success-link-container" class="bg-slate-950 py-2 px-3 rounded-xl font-mono text-xs text-emerald-300 inline-block">babak.eg/MIA-99X</div>
                 </div>
             </div>
         </div>
@@ -219,7 +219,7 @@
                 lblLandmark: 'Night Landmark Description',
                 lblDoorPhoto: 'Upload Door Photo (Entrance)',
                 btnGen: 'Generate & Copy Babak Link',
-                succMsg: '✨ Success! Share this link in your delivery checkouts:',
+                succMsg: '✨ Success! Click your generated link to test rider view:',
                 photoPlaceholder: '📷 [Actual Door Photo]',
                 locations: {
                     miami: {
@@ -291,7 +291,7 @@
                 lblLandmark: 'وصف المعلم الليلي المضيء',
                 lblDoorPhoto: 'رفع صورة باب العمارة',
                 btnGen: 'إنشاء ونسخ رابط بابك',
-                succMsg: '✨ تم بنجاح! شارك هذا الرابط في خانة العنوان:',
+                succMsg: '✨ تم بنجاح! اضغط على اللينك لتجربة وضع الطيار:',
                 photoPlaceholder: '📷 [صورة باب العمارة الحقيقية]',
                 locations: {
                     miami: {
@@ -365,13 +365,14 @@
 
         function selectLocation(locKey) {
             currentLoc = locKey;
-            customUploadedPhotoUrl = null; // reset custom photo on preset change
-            ['miami', 'smouha', 'sidi'].forEach(k => {
+            ['miami', 'smouha', 'sidi', 'custom'].forEach(k => {
                 const pill = document.getElementById(`pill-${k}`);
-                if (k === locKey) {
-                    pill.className = 'location-pill px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950 transition whitespace-nowrap shadow-md shadow-emerald-500/20';
-                } else {
-                    pill.className = 'location-pill px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 transition whitespace-nowrap';
+                if (pill) {
+                    if (k === locKey) {
+                        pill.className = 'location-pill px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950 transition whitespace-nowrap shadow-md shadow-emerald-500/20';
+                    } else {
+                        pill.className = 'location-pill px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 transition whitespace-nowrap';
+                    }
                 }
             });
             updateUI();
@@ -422,7 +423,7 @@
             document.getElementById('btn-gen').innerText = dict.btnGen;
             document.getElementById('succ-msg').innerText = dict.succMsg;
 
-            if (!customUploadedPhotoUrl) {
+            if (!customUploadedPhotoUrl && currentLoc !== 'custom') {
                 document.getElementById('display-door-photo').innerHTML = `<span id="ui-photo-placeholder">${dict.photoPlaceholder}</span>`;
             }
 
@@ -441,8 +442,41 @@
         }
 
         function generatePass() {
+            const bname = document.getElementById('input-bname').value;
+            const street = document.getElementById('input-street').value;
+            const apt = document.getElementById('input-apt').value;
+            const landmark = document.getElementById('input-landmark').value;
+
+            const randomCode = 'MIA-' + Math.floor(100 + Math.random() * 900);
+
+            // Dynamically register the custom location in both English and Arabic dictionaries
+            const customLocObj = {
+                code: randomCode,
+                url: `babak.eg/${randomCode}`,
+                title: bname,
+                desc: street,
+                landmark: landmark,
+                door: customUploadedPhotoUrl ? 'Custom Door Uploaded' : 'Main Iron Gate',
+                park: 'By Pharmacy Corner',
+                floor: apt,
+                elevator: 'Working Normally',
+                gate: 'Ring Intercom / Bell',
+                change: 'Exact change ready'
+            };
+
+            data.en.locations.custom = customLocObj;
+            data.ar.locations.custom = customLocObj;
+
+            // Show success box with a fully clickable interactive link
             const box = document.getElementById('success-box');
             box.classList.remove('hidden');
+            
+            const linkContainer = document.getElementById('success-link-container');
+            linkContainer.innerHTML = `
+                <a href="#" onclick="selectLocation('custom'); switchMode('rider'); return false;" class="text-emerald-300 underline font-bold hover:text-emerald-200">
+                    babak.eg/${randomCode} (Click to open Rider View)
+                </a>
+            `;
         }
     </script>
 </body>
